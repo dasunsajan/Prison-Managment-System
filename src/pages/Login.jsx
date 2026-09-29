@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 
 function Login() {
@@ -36,7 +36,7 @@ function Login() {
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-96">
         <div className="text-center mb-6">
           <div className="text-4xl mb-2">🏛️</div>
-          <h1 className="text-2xl font-bold text-slate-800">Prison of Welikada</h1>
+          <h1 className="text-2xl font-bold text-slate-800">වැලිකඩ බන්ධනාගාරය</h1>
           <p className="text-slate-500 text-sm mt-1">Staff Login</p>
         </div>
 
@@ -86,6 +86,13 @@ function Login() {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
+
+        <p className="text-center text-sm text-slate-500 mt-4">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Create account
+          </Link>
+        </p>
       </div>
     </div>
   );

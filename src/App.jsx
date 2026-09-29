@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Prisoners from "./pages/Prisoners";
 import Staff from "./pages/Staff";
+import Register from "./pages/Register";
 
 function Layout({ children }) {
   return (
@@ -19,6 +20,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard"
           element={
