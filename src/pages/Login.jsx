@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
+import { useLanguage } from "../context/LanguageContext";
 
 function Login() {
+  const { t, lang, changeLang } = useLanguage();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -12,7 +14,7 @@ function Login() {
 
   const handleLogin = async () => {
     if (username.trim() === "" || password.trim() === "") {
-      alert("Please enter username and password");
+      alert(t("enterCredentials"));
       return;
     }
 
@@ -25,7 +27,7 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(response.data.user));
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+      setError(err.response?.data?.message || t("loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -33,16 +35,30 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-blue-900">
+      {/* Language switcher */}
+      <div className="absolute top-5 right-5">
+        <select
+          translate="no"
+          value={lang}
+          onChange={(e) => changeLang(e.target.value)}
+          className="px-3 py-2 rounded-lg border border-slate-300 bg-white cursor-pointer"
+        >
+          <option value="en">English</option>
+          <option value="si">සිංහල</option>
+          <option value="ta">தமிழ்</option>
+        </select>
+      </div>
+
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-96">
         <div className="text-center mb-6">
           <div className="text-4xl mb-2">🏛️</div>
-          <h1 className="text-2xl font-bold text-slate-800">වැලිකඩ බන්ධනාගාරය</h1>
-          <p className="text-slate-500 text-sm mt-1">Staff Login</p>
+          <h1 className="text-2xl font-bold text-slate-800">{t("prisonName")}</h1>
+          <p className="text-slate-500 text-sm mt-1">{t("staffLogin")}</p>
         </div>
 
         <input
           type="text"
-          placeholder="Username"
+          placeholder={t("username")}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="w-full border border-slate-300 p-3 mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -51,7 +67,7 @@ function Login() {
         <div className="relative mb-4">
           <input
             type={showPassword ? "text" : "password"}
-            placeholder="Password"
+            placeholder={t("password")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full border border-slate-300 p-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -84,13 +100,13 @@ function Login() {
           disabled={loading}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-medium transition disabled:opacity-50"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? t("loggingIn") : t("login")}
         </button>
 
         <p className="text-center text-sm text-slate-500 mt-4">
-          Don't have an account?{" "}
+          {t("noAccount")}{" "}
           <Link to="/register" className="text-blue-600 hover:underline">
-            Create account
+            {t("createAccount")}
           </Link>
         </p>
       </div>
