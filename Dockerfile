@@ -1,4 +1,4 @@
-# --- Stage 1: Build eka ---
+# --- Stage 1: Build the application ---
 FROM node:20-alpine AS build
 
 WORKDIR /app
@@ -8,13 +8,13 @@ RUN npm install
 
 COPY . .
 
-# React app eka production widiyata build karanawa (static files hadanawa)
+# Build the React application for production (generates static files)
 RUN npm run build
 
-# --- Stage 2: Serve eka (nginx use karala) ---
+# --- Stage 2: Serve the application using Nginx ---
 FROM nginx:alpine
 
-# Build kalpu static files nginx ekata copy karanawa
+# Copy the generated static files from the build stage to the Nginx web directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
