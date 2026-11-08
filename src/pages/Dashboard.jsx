@@ -3,8 +3,6 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/axios";
 import { useLanguage } from "../context/LanguageContext";
 
-const authCfg = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
-
 const COMMON = [
   { name: "photo", labelKey: "fieldPhoto", type: "photo", detail: true },
   { name: "fullName", labelKey: "fieldFullName", required: true },
@@ -106,7 +104,7 @@ function Dashboard() {
   const load = useCallback(async () => {
     if (!tab) return;
     try {
-      const res = await api.get(`/people/${tab}`, { ...authCfg(), params: { q: search } });
+      const res = await api.get(`/people/${tab}`, { params: { q: search } });
       setRows(res.data);
     } catch (err) {
       if ([401, 403].includes(err.response?.status)) logout();
@@ -141,8 +139,8 @@ function Dashboard() {
     const text = form.details?.offence;
     if (!text?.trim()) return;
     try {
-      const si = await api.post("/translate", { text, targetLang: "si" }, authCfg());
-      const ta = await api.post("/translate", { text, targetLang: "ta" }, authCfg());
+      const si = await api.post("/translate", { text, targetLang: "si" });
+      const ta = await api.post("/translate", { text, targetLang: "ta" });
       setForm({
         ...form,
         details: { ...form.details, offenceSi: si.data.translatedText, offenceTa: ta.data.translatedText },
@@ -165,8 +163,8 @@ function Dashboard() {
     const { fullName, nic, phone, address, dateOfBirth, details } = form;
     const payload = { fullName, nic, phone, address, dateOfBirth, details };
     try {
-      if (form._id) await api.put(`/people/${tab}/${form._id}`, payload, authCfg());
-      else await api.post(`/people/${tab}`, payload, authCfg());
+      if (form._id) await api.put(`/people/${tab}/${form._id}`, payload);
+      else await api.post(`/people/${tab}`, payload);
       setForm(null);
       load();
     } catch (err) {
@@ -177,7 +175,7 @@ function Dashboard() {
   const remove = async (row) => {
     if (!window.confirm(`${t("deleteConfirm")} ${row.fullName}${t("deleteConfirmSuffix")}`)) return;
     try {
-      await api.delete(`/people/${tab}/${row._id}`, authCfg());
+      await api.delete(`/people/${tab}/${row._id}`);
       load();
     } catch (err) {
       setError(err.response?.data?.message || t("deleteFailed"));
@@ -188,7 +186,7 @@ function Dashboard() {
     e.preventDefault();
     setInviteCode("");
     try {
-      const res = await api.post("/admin/invites", invite, authCfg());
+      const res = await api.post("/admin/invites", invite);
       setInviteCode(res.data.code);
       setInvite({ badgeNumber: "", fullName: "" });
     } catch (err) {

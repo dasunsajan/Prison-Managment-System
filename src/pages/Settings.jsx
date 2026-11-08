@@ -3,8 +3,6 @@ import api from "../api/axios";
 import { useLanguage } from "../context/LanguageContext";
 import { useTheme } from "../context/ThemeContext";
 
-const authCfg = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
-
 function Section({ title, children }) {
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-4">
@@ -39,7 +37,7 @@ export default function Settings() {
     setMsg("");
     try {
       // backend route eka thawama hadala na nam eka passe hadamu
-      await api.put("/change-password", pw, authCfg());
+      await api.put("/change-password", pw);
       setMsg(t("passwordChanged"));
       setPw({ currentPassword: "", newPassword: "" });
     } catch (err) {
