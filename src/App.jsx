@@ -6,12 +6,22 @@ import Register from "./pages/Register";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
 function Layout({ children }) {
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 bg-slate-50 min-h-screen min-w-0">{children}</div>
-    </div>
+    <ProtectedRoute>
+      <div className="flex">
+        <Sidebar />
+        <div className="flex-1 bg-slate-50 min-h-screen min-w-0">{children}</div>
+      </div>
+    </ProtectedRoute>
   );
 }
 
