@@ -18,6 +18,7 @@ export default function Sidebar() {
   const current = new URLSearchParams(search).get("type");
   const user = JSON.parse(localStorage.getItem("user") || "null");
   const [photo, setPhoto] = useState(getPhoto(user));
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const update = () => setPhoto(getPhoto(user));
@@ -25,8 +26,35 @@ export default function Sidebar() {
     return () => window.removeEventListener("profile-updated", update);
   }, []);
 
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname, search]);
+
   return (
-    <aside className="w-64 min-h-screen bg-slate-900 text-white flex flex-col shrink-0">
+    <>
+      {/* Mobile toggle button */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        aria-label="Toggle navigation"
+        className="md:hidden fixed bottom-4 right-4 z-50 w-12 h-12 rounded-full bg-blue-600 text-white shadow-lg flex items-center justify-center text-xl"
+      >
+        {open ? "✕" : "☰"}
+      </button>
+
+      {/* Mobile backdrop */}
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+        />
+      )}
+
+      <aside
+        className={`w-64 min-h-screen bg-slate-900 text-white flex flex-col shrink-0 fixed md:static inset-y-0 left-0 z-40 transform transition-transform duration-200 ${
+          open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
       <div className="px-6 py-5 text-xl font-bold border-b border-slate-800">🏛️ Prison MS</div>
 
       {/* Profile card */}
@@ -79,6 +107,7 @@ export default function Sidebar() {
       <div className="p-4 text-sm text-slate-400 border-t border-slate-800">
         {t("loggedInAs")} {user?.role}
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }
