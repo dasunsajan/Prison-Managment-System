@@ -1,16 +1,52 @@
-# React + Vite
+# Welikada Prison Management System (Client)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, multilingual web application for managing prisoner records, doctors, visitors, officers, and general staff at Welikada Prison.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Unified Record Management**: Manage Prisoners, Doctors, Visitors, Officers, and Staff from a centralized dashboard.
+- **Multilingual Support (i18n)**: Full user interface and offence translation support in **English**, **Sinhala (සිංහල)**, and **Tamil (தமிழ்)**.
+- **Role-Based Access & Invite System**: Administrator-generated one-time invite codes for officer registration and JWT-based authentication.
+- **Customizable Appearance**: Light/Dark theme toggle, adjustable font sizes, and user profile photo management.
+- **Responsive Design**: Collapsible mobile navigation drawer and responsive data tables.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19, Vite, React Router v7
+- **Styling**: Tailwind CSS v4
+- **HTTP Client**: Axios (with request/response auth interceptors)
+- **Containerization**: Docker (Multi-stage Node 20 Alpine build + Nginx Alpine server)
 
-## Expanding the ESLint configuration
+## Getting Started (Local Development)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment variables (optional):**
+   Create a `.env` file in the root directory if your backend runs on a custom URL (defaults to `http://localhost:5000/api`):
+   ```env
+   VITE_API_URL=http://localhost:5000/api
+   ```
+
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+## Docker Deployment
+
+Build and run the production container using Docker:
+
+```bash
+docker build -t prison-management-client .
+docker run -p 8080:80 prison-management-client
+```
+
+Then open `http://localhost:8080` in your browser.
