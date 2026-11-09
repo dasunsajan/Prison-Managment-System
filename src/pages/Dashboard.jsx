@@ -89,6 +89,7 @@ function Dashboard() {
   const tab = TYPES[params.get("type")] ? params.get("type") : null;
 
   const [rows, setRows] = useState([]);
+  const [counts, setCounts] = useState({});
   const [search, setSearch] = useState("");
   const [form, setForm] = useState(null);
   const [error, setError] = useState("");
@@ -113,9 +114,23 @@ function Dashboard() {
   }, [tab, search, logout, t]);
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) navigate("/");
-    else load();
-  }, [load, navigate]);
+    if (!localStorage.getItem("token")) {
+      navigate("/");
+      return;
+    }
+    if (tab) {
+      load();
+    } else {
+      Promise.all(
+        Object.keys(TYPES).map((k) =>
+          api
+            .get(`/people/${k}`)
+            .then((res) => [k, Array.isArray(res.data) ? res.data.length : 0])
+            .catch(() => [k, 0])
+        )
+      ).then((entries) => setCounts(Object.fromEntries(entries)));
+    }
+  }, [load, navigate, tab]);
 
   // sidebar eken category wenas karaddi reset karanawa
   useEffect(() => {
@@ -247,8 +262,11 @@ function Dashboard() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {Object.entries(TYPES).map(([key, v]) => (
                 <Link key={key} to={`/dashboard?type=${key}`}
-                  className="bg-white rounded-xl shadow p-6 text-center font-semibold text-slate-700 hover:bg-blue-50">
-                  {t(v.labelKey)}
+                  className="bg-white rounded-xl shadow p-6 text-center font-semibold text-slate-700 hover:bg-blue-50 transition">
+                  <div className="text-3xl font-bold text-blue-600 mb-1">
+                    {counts[key] ?? "—"}
+                  </div>
+                  <div>{t(v.labelKey)}</div>
                 </Link>
               ))}
             </div>
