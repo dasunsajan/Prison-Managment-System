@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/axios";
 import { useLanguage } from "../context/LanguageContext";
+import { resizeImage } from "../utils/profile";
 
 const COMMON = [
   { name: "photo", labelKey: "fieldPhoto", type: "photo", detail: true },
@@ -60,25 +61,6 @@ const TYPES = {
 
 const inputClass =
   "w-full border border-slate-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
-
-// image eka podi karanawa (max 300px) - request size error enne na
-const resizeImage = (file) =>
-  new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const scale = Math.min(1, 300 / img.width);
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/jpeg", 0.8));
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
 
 function Dashboard() {
   const navigate = useNavigate();
