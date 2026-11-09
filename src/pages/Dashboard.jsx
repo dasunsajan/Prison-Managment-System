@@ -91,6 +91,8 @@ function Dashboard() {
   const [rows, setRows] = useState([]);
   const [counts, setCounts] = useState({});
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState(null);
   const [error, setError] = useState("");
   const [invite, setInvite] = useState({ badgeNumber: "", fullName: "" });
@@ -102,16 +104,24 @@ function Dashboard() {
     navigate("/");
   }, [navigate]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const load = useCallback(async () => {
     if (!tab) return;
+    setLoading(true);
     try {
-      const res = await api.get(`/people/${tab}`, { params: { q: search } });
+      const res = await api.get(`/people/${tab}`, { params: { q: debouncedSearch } });
       setRows(res.data);
     } catch (err) {
       if ([401, 403].includes(err.response?.status)) logout();
       else setError(t("loadFailed"));
+    } finally {
+      setLoading(false);
     }
-  }, [tab, search, logout, t]);
+  }, [tab, debouncedSearch, logout, t]);
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -135,6 +145,7 @@ function Dashboard() {
   // sidebar eken category wenas karaddi reset karanawa
   useEffect(() => {
     setSearch("");
+    setDebouncedSearch("");
     setForm(null);
     setError("");
     setRows([]);
@@ -337,10 +348,13 @@ function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.length === 0 && (
+                  {loading && (
+                    <tr><td colSpan={allFields.length + 1} className="p-4 text-center text-slate-400">Loading...</td></tr>
+                  )}
+                  {!loading && rows.length === 0 && (
                     <tr><td colSpan={allFields.length + 1} className="p-4 text-center text-slate-400">{t("noRecords")}</td></tr>
                   )}
-                  {rows.map((r) => (
+                  {!loading && rows.map((r) => (
                     <tr key={r._id} className="border-t">
                       {allFields.map((f) => (
                         <td key={f.name} className="p-3 whitespace-nowrap">{renderCell(r, f)}</td>
