@@ -36,6 +36,7 @@ function App() {
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/prisoners" element={<Navigate to="/dashboard?type=prisoner" replace />} />
         <Route path="/staff" element={<Navigate to="/dashboard?type=staff" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );
