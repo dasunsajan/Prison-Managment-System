@@ -32,7 +32,18 @@ router.post("/login", async (req, res) => {
 
     res.json({
       token,
-      user: { id: user._id, fullName: user.fullName, username: user.username, role: user.role },
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        username: user.username,
+        role: user.role,
+        badgeNumber: user.badgeNumber,
+        nic: user.nic,
+        phone: user.phone,
+        email: user.email,
+        rank: user.rank,
+        department: user.section,
+      },
     });
   } catch (e) {
     console.error(e);
@@ -141,6 +152,35 @@ router.post("/register", async (req, res) => {
       return res.status(409).json({ message: "Username, NIC or badge number is already registered" });
     }
     console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ---------------- CHANGE PASSWORD ----------------
+router.put("/change-password", requireAuth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (typeof currentPassword !== "string" || typeof newPassword !== "string" || !currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new password are required" });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "New password must be at least 6 characters" });
+    }
+
+    const user = await Staff.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if (!match) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: "Password changed successfully" });
+  } catch (e) {
+    console.error(e);
     res.status(500).json({ message: "Server error" });
   }
 });
