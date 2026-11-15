@@ -1,0 +1,20 @@
+services:
+  backend:
+    build:
+      context: ./prison-server (Backend)
+    container_name: prison-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./prison-server (Backend)/.env
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./prison-client (Frontend)
+    container_name: prison-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
